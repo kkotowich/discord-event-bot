@@ -21,6 +21,7 @@ func main() {
 
 	// Register handlers here
 	dg.AddHandler(handlers.Ready)
+	dg.AddHandler(handlers.MessageCreate)
 
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
