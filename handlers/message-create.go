@@ -8,11 +8,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func Ready(s *discordgo.Session, event *discordgo.Ready) {
-	fmt.Printf("event.Version: %v\n", event.Version)
-
-}
-
 func parseCommand(s string) (string, []string) {
 	var fields []string
 	var sb strings.Builder
