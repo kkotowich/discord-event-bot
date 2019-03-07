@@ -21,7 +21,7 @@ func parseCommand(s string) (string, []string) {
 	// parse string, spliting on spaces tabs and newlines
 	// get everything in quotes
 	for _, c := range s {
-		if quote == 0 && (c == '\'' || c == '"' || c == '`') {
+		if quote == 0 && (c == '\'' || c == '"' || c == '`') && sb.Len() == 0 {
 			quote = c
 		} else if quote == c || (quote == 0 && (c == ' ' || c == '\n' || c == '\t')) {
 			quote = 0
