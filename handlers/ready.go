@@ -8,5 +8,4 @@ import (
 
 func Ready(s *discordgo.Session, event *discordgo.Ready) {
 	fmt.Printf("event.Version: %v\n", event.Version)
-
 }
