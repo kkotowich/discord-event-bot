@@ -36,22 +36,23 @@ func (c *Command) help(s *discordgo.Session, m *discordgo.MessageCreate, err err
 	var sb strings.Builder
 
 	// command's name and description
+	sb.WriteString("__**")
 	sb.WriteString(c.Name)
-	sb.WriteRune('\n')
+	sb.WriteString("**__\n")
 	sb.WriteString(c.Description)
-	sb.WriteRune('\n')
-
+	sb.WriteString("\n\n")
 	// subcommand list
 	for k, v := range c.subcommands {
+		sb.WriteString("__*")
 		sb.WriteString(k)
-		sb.WriteString(":\t")
+		sb.WriteString(":*__ ")
 		sb.WriteString(v.Description)
 		sb.WriteRune('\n')
 	}
 
 	// display error
 	if err != nil {
-		sb.WriteString("error:\n```")
+		sb.WriteString("__***error:***__\n```")
 		sb.WriteString(err.Error())
 		sb.WriteString("```")
 	}

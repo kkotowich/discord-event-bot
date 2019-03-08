@@ -14,8 +14,33 @@ var Commands map[string]*Command
 func SetCommands() {
 	Commands = make(map[string]*Command)
 
+	setHelpCommand()
 	setPingCommand()
 	setSayCommand()
+}
+
+func setHelpCommand() {
+	help := Command{Name: "help", Description: "List Commands"}
+
+	help.SetCommandAction(helpAction)
+
+	Commands[help.Name] = &help
+}
+
+func helpAction(s *discordgo.Session, m *discordgo.MessageCreate, _ []string) error {
+	var sb strings.Builder
+
+	// list commands
+	for k, v := range Commands {
+		sb.WriteString("__*")
+		sb.WriteString(k)
+		sb.WriteString(":*__")
+		sb.WriteString(v.Description)
+		sb.WriteRune('\n')
+	}
+	s.ChannelMessageSend(m.ChannelID, sb.String())
+
+	return nil
 }
 
 func setPingCommand() {
