@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"fmt"
 	"os"
 	"strings"
+
+	"discord-event-bot/commands"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -61,7 +62,8 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	command, args := parseCommand(text)
 
-	// TODO: map\register command to function and call here with supplied args
-	// i.e. commands[command](args)
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("command: %s\nargs: %s", command, strings.Join(args, ", ")))
+	c, exists := commands.Commands[command]
+	if exists {
+		c.RunCommand(s, m, args)
+	}
 }

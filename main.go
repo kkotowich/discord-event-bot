@@ -1,7 +1,8 @@
 package main
 
 import (
-	"discord-notify-bot/handlers"
+	"discord-event-bot/commands"
+	"discord-event-bot/handlers"
 	"fmt"
 	"os"
 	"os/signal"
@@ -18,6 +19,9 @@ func main() {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
+
+	// Set up commands
+	commands.SetCommands()
 
 	// Register handlers here
 	dg.AddHandler(handlers.Ready)
