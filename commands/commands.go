@@ -14,6 +14,11 @@ var Commands map[string]*Command
 func SetCommands() {
 	Commands = make(map[string]*Command)
 
+	setPingCommand()
+	setSayCommand()
+}
+
+func setPingCommand() {
 	// example ping command
 	ping := Command{Name: "ping", Description: "respond to ping"}
 
@@ -22,7 +27,9 @@ func SetCommands() {
 		return nil
 	})
 	Commands[ping.Name] = &ping
+}
 
+func setSayCommand() {
 	// say command
 	say := Command{Name: "say", Description: "bot will repeat what you said"}
 	Commands[say.Name] = &say
@@ -49,5 +56,4 @@ func SetCommands() {
 	// add subcommands
 	say.AddSubCommand(&sayUpper)
 	say.AddSubCommand(&sayLower)
-
 }
