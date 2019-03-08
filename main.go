@@ -1,8 +1,8 @@
 package main
 
 import (
-	"discord-notify-bot/commands"
-	"discord-notify-bot/handlers"
+	"discord-event-bot/commands"
+	"discord-event-bot/handlers"
 	"fmt"
 	"os"
 	"os/signal"

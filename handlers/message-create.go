@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"discord-notify-bot/commands"
+	"discord-event-bot/commands"
 
 	"github.com/bwmarrin/discordgo"
 )
