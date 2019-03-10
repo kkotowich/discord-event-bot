@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"os"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -10,6 +11,9 @@ type action func(s *discordgo.Session, m *discordgo.MessageCreate, args []string
 
 // Command text map to function or other sub commands
 type Command struct {
+	// for help text to get full command
+	Parent *Command
+
 	//subcommands
 	subcommands map[string]*Command
 
@@ -17,6 +21,9 @@ type Command struct {
 	Description string
 
 	commandAction action
+
+	// list of args to help identify what to enter
+	argumentNames []string
 }
 
 // AddSubCommand set passed command as to be a subcommand
@@ -24,24 +31,68 @@ func (c *Command) AddSubCommand(subcommand *Command) {
 	if c.subcommands == nil {
 		c.subcommands = make(map[string]*Command)
 	}
+	subcommand.Parent = c
 	c.subcommands[subcommand.Name] = subcommand
 }
 
 // SetCommandAction set the action function for this command
-func (c *Command) SetCommandAction(a action) {
+func (c *Command) SetCommandAction(a action, args []string) {
 	c.commandAction = a
+	c.argumentNames = args
 }
 
-func (c *Command) help(s *discordgo.Session, m *discordgo.MessageCreate, err error) {
+// GetSubCommand return the subcommand in provide path
+// nothing is return if not on path
+func (c *Command) GetSubCommand(commands *[]string, i int) *Command {
+	if c.subcommands == nil {
+		return nil
+	}
+
+	subcommand, exists := c.subcommands[(*commands)[i]]
+	if exists {
+		if len(*commands) == i+1 {
+			return subcommand
+		}
+		return subcommand.GetSubCommand(commands, i+1)
+	}
+	return nil
+}
+
+func (c *Command) commandText(sb *strings.Builder) {
+	if c.Parent == nil {
+		prefix := os.Getenv("CommandPrefix")
+		sb.WriteString(prefix)
+		sb.WriteString(c.Name)
+	} else {
+		c.Parent.commandText(sb)
+		sb.WriteRune(' ')
+		sb.WriteString(c.Name)
+	}
+}
+
+func (c *Command) commandArgs(sb *strings.Builder) {
+	for _, v := range c.argumentNames {
+		sb.WriteString(" <")
+		sb.WriteString(v)
+		sb.WriteString(">")
+	}
+}
+
+// Help provide descriptive help text for command
+func (c *Command) Help(s *discordgo.Session, m *discordgo.MessageCreate, err error) {
 	var sb strings.Builder
 
 	// command's name and description
-	sb.WriteString("__**")
-	sb.WriteString(c.Name)
-	sb.WriteString("**__\n")
+	sb.WriteString("`Command: ")
+	c.commandText(&sb)
+	c.commandArgs(&sb)
+	sb.WriteString("`\n")
 	sb.WriteString(c.Description)
 	sb.WriteString("\n\n")
 	// subcommand list
+	if len(c.subcommands) > 0 {
+		sb.WriteString("__**Subcommands:**__\n")
+	}
 	for k, v := range c.subcommands {
 		sb.WriteString("__*")
 		sb.WriteString(k)
@@ -73,15 +124,15 @@ func (c *Command) RunCommand(s *discordgo.Session, m *discordgo.MessageCreate, a
 				}
 				subcommand.RunCommand(s, m, subargs)
 			} else {
-				c.help(s, m, nil)
+				c.Help(s, m, nil)
 			}
 		} else {
-			c.help(s, m, nil)
+			c.Help(s, m, nil)
 		}
 	} else {
 		err := c.commandAction(s, m, args)
 		if err != nil {
-			c.help(s, m, err)
+			c.Help(s, m, err)
 		}
 	}
 }
