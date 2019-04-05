@@ -12,4 +12,5 @@ func SetCommands() {
 	setSayCommand()
 	setCounter()
 	setDateDifCommand()
+	setShiftCodesCommand()
 }

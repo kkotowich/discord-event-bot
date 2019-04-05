@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// ConvertIntSlick converts []string to []int
+// ConvertIntSlice converts []string to []int
 func ConvertIntSlice(toConvert []string) ([]int, error) {
 	var converted []int
 	var sb strings.Builder
